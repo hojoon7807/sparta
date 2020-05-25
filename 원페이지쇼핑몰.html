@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>원페이지 쇼핑몰</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script>
+        function order_comp() {
+            let name = $("#input_name").val()
+            let ad = $("#input_ad").val()
+            let item = $("#inputGroupSelect01 option:selected").val()
+            let call = $("#input_call").val()
+            if (name == "") {
+                alert("이름을 입력해주세요.")
+            }
+            else if (item =="---수량을 선택하세요---") {
+                alert("수량을 선택해주세요.")
+            }
+            else if (ad == "") {
+                alert("주소를 입력해주세요.")
+
+            }
+            else if (call == "") {
+                alert("전화번호를 입력해주세요.")
+            }
+            else {
+                alert("주문이 완료되었습니다.")
+            }
+
+        }
+        $(document).ready(function () {
+            $.ajax({
+                type: 'GET',
+                url: 'https://api.manana.kr/exchange/rate.json',
+                data: {},
+                success: function (response) {
+                    let dollor = response[1]['rate']
+                    let temp = `<p class="exchange"> 달러-원 환율 : ${dollor} </p>`
+                    $("#won").append(temp);
+
+                }
+            })
+        });
+    </script>
+</head>
+
+
+<body>
+    <div class="all">
+        <p><img class="all" src="https://www.chicagototal.com/wp-content/uploads/2018/09/apple-watch-series-4.jpg"
+                alt=""></p>
+        <div class="title">
+            <h2>애플워치 시리즈 5</h2>
+            <h5>가격 ₩539,000 /개</h5>
+            <p>지금까지의 Apple Watch 중 가장 앞선 모델. 상시표시형 Retina 디스플레이, ‘국제 긴급 구조 요청’ 및 ‘넘어짐 감지’ 기능 그리고 내장 나침반까지.</p>
+        </div>
+        <div id = "won">
+            
+        </div>
+        <h2>주문하기</h2>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-default">주문자 이름</span>
+            </div>
+            <input type="text" class="form-control" aria-label="Sizing example input"
+                aria-describedby="inputGroup-sizing-default" id="input_name">
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="inputGroupSelect01">수량</label>
+            </div>
+            <select class="custom-select" id="inputGroupSelect01">
+                <option selected>---수량을 선택하세요---</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+            </select>
+        </div>
+
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-default">주소</span>
+            </div>
+            <input type="text" class="form-control" aria-label="Sizing example input"
+                aria-describedby="inputGroup-sizing-default" id="input_ad">
+        </div>
+
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-default">전화번호</span>
+            </div>
+            <input type="text" class="form-control" aria-label="Sizing example input"
+                aria-describedby="inputGroup-sizing-default" id="input_call">
+        </div>
+        <div class="button">
+            <button type="button" class="btn btn-primary center" onclick="order_comp()">주문하기</button>
+        </div>
+
+
+    </div>
+</body>
+
+</html>
