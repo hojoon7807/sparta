@@ -24,15 +24,15 @@
         function order_comp() {
             let name = $("#input_name").val()
             let address = $("#input_ad").val()
-            let Amount = $("#inputGroupSelect01").val()
+            let amount = $("#inputGroupSelect01").val()
             let call = $("#input_call").val()
-            
+
             if (name == "") {
                 alert("이름을 입력해주세요.")
                 $('#input_name').focus();
                 return
             }
-            else if (Amount == "---수량을 선택하세요---") {
+            else if (amount == "---수량을 선택하세요---") {
                 alert("수량을 선택해주세요.")
                 $('#inputGroupSelect01').focus();
                 return
@@ -48,24 +48,24 @@
                 $('#input_call').focus();
                 return
             }
-
-        }
-        $.ajax({
-            type: "POST",
-            url: "/orders",
-            data: {
-                give_name: name,
-                give_amount: Amount,
-                give_address: address,
-                give_call: call
-            },
-            success: function (response) {
-                if (response['result'] == 'success') {
-                    alert(response['msg'])
-                    window.location.reload()
+            $.ajax({
+                type: "POST",
+                url: "/orders",
+                data: {
+                    give_name: name,
+                    give_amount: amount,
+                    give_address: address,
+                    give_call: call
+                },
+                success: function (response) {
+                    if (response['result'] == 'success') {
+                        alert(response['msg'])
+                        window.location.reload()
+                    }
                 }
-            }
-        })
+            })
+        }
+
 
 
         function listing() {
