@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>원페이지 쇼핑몰</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+    <script>
+
+        function order_comp() {
+            let name = $("#input_name").val()
+            let address = $("#input_ad").val()
+            let Amount = $("#inputGroupSelect01").val()
+            let call = $("#input_call").val()
+            
+            if (name == "") {
+                alert("이름을 입력해주세요.")
+                $('#input_name').focus();
+                return
+            }
+            else if (Amount == "---수량을 선택하세요---") {
+                alert("수량을 선택해주세요.")
+                $('#inputGroupSelect01').focus();
+                return
+            }
+            else if (address == "") {
+                alert("주소를 입력해주세요.")
+                $('#input_ad').focus();
+                return
+
+            }
+            else if (call == "") {
+                alert("전화번호를 입력해주세요.")
+                $('#input_call').focus();
+                return
+            }
+
+        }
+        $.ajax({
+            type: "POST",
+            url: "/orders",
+            data: {
+                give_name: name,
+                give_amount: Amount,
+                give_address: address,
+                give_call: call
+            },
+            success: function (response) {
+                if (response['result'] == 'success') {
+                    alert(response['msg'])
+                    window.location.reload()
+                }
+            }
+        })
+
+
+        function listing() {
+            $.ajax({
+                type: "GET",
+                url: "/orders",
+                data: {},
+                success: function (response) {
+                    if (response['result'] == 'success') {
+                        let orders = response['orders'];
+                        for (let i = 0; i < orders.length; i++) {
+                            make_table(orders[i]['name'], orders[i]['amount'], orders[i]['address'], orders[i]['call']);
+                        }
+                    } else {
+                        alert('주문을 받아오지 못했습니다');
+                    }
+                }
+            })
+
+        }
+        function make_table(name, amount, address, call) {
+            let temp = `
+                    <tr>
+                        <th scope="row">${name}</th>
+                        <td>${amount}</td>
+                        <td>${address}</td>
+                        <td>${call}</td>
+                    </tr>`
+            $('#orders').append(temp);
+
+        }
+        $(document).ready(function () {
+            $('#orders').empty();
+            $.ajax({
+                type: 'GET',
+                url: 'https://api.manana.kr/exchange/rate.json',
+                data: {},
+                success: function (response) {
+                    let dollor = response[1]['rate']
+                    let temp = `<p class="exchange"> 달러-원 환율 : ${dollor} </p>`
+                    $("#won").append(temp)
+                }
+            })
+
+            listing();
+        });
+    </script>
+    <style>
+        * {
+            font-family: 'Nanum Myeongjo', serif;
+        }
+
+        .all {
+            width: 600px;
+            margin: 10px auto;
+        }
+
+        .title h2,
+        .title h5 {
+            display: inline;
+            margin-right: 5px;
+        }
+
+        .button {
+            text-align: center;
+        }
+
+        .exchange {
+            color: blue;
+        }
+
+        .tables {
+            margin-top: 50px;
+        }
+    </style>
+</head>
+
+
+<body>
+    <div class="all">
+        <p><img class="all" src="https://www.chicagototal.com/wp-content/uploads/2018/09/apple-watch-series-4.jpg"
+                alt=""></p>
+        <div class="title">
+            <h2>애플워치 시리즈 5</h2>
+            <h5>가격 ₩539,000 /개</h5>
+            <p>지금까지의 Apple Watch 중 가장 앞선 모델. 상시표시형 Retina 디스플레이, ‘국제 긴급 구조 요청’ 및 ‘넘어짐 감지’ 기능 그리고 내장 나침반까지.</p>
+        </div>
+        <div id="won">
+
+        </div>
+        <h2>주문하기</h2>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-default">주문자 이름</span>
+            </div>
+            <input type="text" class="form-control" aria-label="Sizing example input"
+                aria-describedby="inputGroup-sizing-default" id="input_name">
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="inputGroupSelect01">수량</label>
+            </div>
+            <select class="custom-select" id="inputGroupSelect01">
+                <option selected>---수량을 선택하세요---</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+            </select>
+        </div>
+
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-default">주소</span>
+            </div>
+            <input type="text" class="form-control" aria-label="Sizing example input"
+                aria-describedby="inputGroup-sizing-default" id="input_ad">
+        </div>
+
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-default">전화번호</span>
+            </div>
+            <input type="text" class="form-control" aria-label="Sizing example input"
+                aria-describedby="inputGroup-sizing-default" id="input_call">
+        </div>
+        <div class="button">
+            <button type="button" class="btn btn-primary center" onclick="order_comp()">주문하기</button>
+        </div>
+        <div class='tables'>
+            <table class="table">
+                <thead class="thead-light">
+                    <tr>
+                        <th scope="col">이름</th>
+                        <th scope="col">수량</th>
+                        <th scope="col">주소</th>
+                        <th scope="col">전화번호</th>
+                    </tr>
+                </thead>
+                <tbody id='orders'>
+                    <tr>
+                        <th scope="row">1</th>
+                        <td>Mark</td>
+                        <td>Otto</td>
+                        <td>@mdo</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">2</th>
+                        <td>Jacob</td>
+                        <td>Thornton</td>
+                        <td>@fat</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">3</th>
+                        <td>Larry</td>
+                        <td>the Bird</td>
+                        <td>@twitter</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</body>
+
+</html>
